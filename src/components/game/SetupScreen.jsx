@@ -44,7 +44,7 @@ export function SetupScreen() {
       players: validPlayers,
       totalRounds,
       settings: {
-        firstThreeRollsSevenRule,
+        firstThreeRollsSevenRule: firstThreeRollsRule,
         snarkLevel: 'off',
         audioEnabled: false,
       },
