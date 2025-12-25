@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import {
   initializeGame,
   processDiceRoll,
@@ -10,8 +11,11 @@ import {
 /**
  * Zustand store for game state
  * Manages the entire game lifecycle
+ * Uses persist middleware to save state to localStorage
  */
-export const useGameStore = create((set, get) => ({
+export const useGameStore = create(
+  persist(
+    (set, get) => ({
   // Game state
   game: null,
   gameStatus: null,
@@ -227,4 +231,16 @@ export const useGameStore = create((set, get) => ({
       errorMessage: '',
     })
   },
-}))
+    }),
+    {
+      name: 'bank-game-storage', // localStorage key
+      partialPersist: true,
+      // Only persist game state, not UI state
+      partialize: (state) => ({
+        game: state.game,
+        gameStatus: state.gameStatus,
+        previousGame: state.previousGame,
+      }),
+    }
+  )
+)
