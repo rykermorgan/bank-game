@@ -33,22 +33,22 @@ export function GameScreen() {
   return (
     <div className="min-h-screen bg-background-light p-4 space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-h1 font-bold text-primary">🎲 Bank Game</h1>
-        <div className="flex items-center space-x-2">
+      <div className="flex items-center justify-between gap-2">
+        <h1 className="text-2xl font-bold text-primary whitespace-nowrap">🎲 Bank</h1>
+        <div className="flex items-center gap-1.5">
           {canUndo() && (
             <button
               onClick={undo}
-              className="px-4 py-2 text-sm font-semibold text-secondary hover:text-secondary/80"
+              className="px-3 py-1.5 text-sm font-semibold text-secondary hover:text-secondary/80 whitespace-nowrap"
             >
               ↶ Undo
             </button>
           )}
           <button
             onClick={resetGame}
-            className="px-4 py-2 text-sm font-semibold text-gray-600 hover:text-gray-800"
+            className="px-3 py-1.5 text-sm font-semibold text-gray-600 hover:text-gray-800 whitespace-nowrap"
           >
-            New Game
+            New
           </button>
         </div>
       </div>
@@ -68,18 +68,13 @@ export function GameScreen() {
         </div>
       )}
 
-      {/* Round Info */}
-      <RoundInfo
-        currentRound={game.currentRound}
-        totalRounds={game.totalRounds}
-        rollCount={game.rollCountInRound}
-      />
-
-      {/* Final Round Indicator */}
-      {game.currentRound === game.totalRounds && !isRoundEnded && !isGameEnded && (
-        <div className="p-3 bg-warning/20 border-2 border-warning rounded-lg text-center">
-          <p className="text-lg font-bold text-warning">🏁 Final Round!</p>
-        </div>
+      {/* Round Info - Hide when round ends */}
+      {!isRoundEnded && !isGameEnded && (
+        <RoundInfo
+          currentRound={game.currentRound}
+          totalRounds={game.totalRounds}
+          rollCount={game.rollCountInRound}
+        />
       )}
 
       {/* Current Player Turn - Only show if round is active */}

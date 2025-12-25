@@ -52,11 +52,10 @@ export function SetupScreen() {
 
   return (
     <div className="min-h-screen bg-background-light p-4">
-      <div className="max-w-2xl mx-auto space-y-6">
+      <div className="max-w-2xl mx-auto space-y-4">
         {/* Header */}
-        <div className="text-center py-8">
-          <h1 className="text-h1 font-bold text-primary mb-2">🎲 Bank Game</h1>
-          <p className="text-body text-gray-600">Set up your game</p>
+        <div className="text-center py-4">
+          <h1 className="text-2xl font-bold text-primary">🎲 Bank Game</h1>
         </div>
 
         {/* Players */}
