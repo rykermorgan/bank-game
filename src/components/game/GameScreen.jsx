@@ -63,6 +63,13 @@ export function GameScreen() {
         rollCount={game.rollCountInRound}
       />
 
+      {/* Final Round Indicator */}
+      {game.currentRound === game.totalRounds && !isRoundEnded && !isGameEnded && (
+        <div className="p-3 bg-warning/20 border-2 border-warning rounded-lg text-center">
+          <p className="text-lg font-bold text-warning">🏁 Final Round!</p>
+        </div>
+      )}
+
       {/* Current Player Turn - Only show if round is active */}
       {!isRoundEnded && !isGameEnded && (
         <div className="p-3 bg-secondary/10 border-2 border-secondary rounded-lg text-center">
@@ -109,14 +116,14 @@ export function GameScreen() {
       {isRoundEnded && !isGameEnded && (
         <div className="p-4 bg-warning/10 border-2 border-warning rounded-lg">
           <p className="text-center font-semibold text-warning mb-3">
-            Round {game.currentRound} ended!{' '}
+            {game.currentRound === game.totalRounds ? '🏁 Final round' : `Round ${game.currentRound}`} ended!{' '}
             {game.roundEndReason === 'seven_rolled' ? '7 was rolled!' : 'All players banked!'}
           </p>
           <button
             onClick={nextRound}
             className="w-full py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 active:scale-95"
           >
-            Next Round
+            {game.currentRound === game.totalRounds ? 'View Final Results' : 'Next Round'}
           </button>
         </div>
       )}
