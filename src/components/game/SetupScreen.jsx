@@ -6,7 +6,6 @@ export function SetupScreen() {
 
   const [playerNames, setPlayerNames] = useState(['Alice', 'Bob'])
   const [totalRounds, setTotalRounds] = useState(10)
-  const [firstThreeRollsRule, setFirstThreeRollsRule] = useState(true)
 
   const handleAddPlayer = () => {
     if (playerNames.length < 6) {
@@ -44,7 +43,7 @@ export function SetupScreen() {
       players: validPlayers,
       totalRounds,
       settings: {
-        firstThreeRollsSevenRule: firstThreeRollsRule,
+        firstThreeRollsSevenRule: true, // Always enabled - it's the normal rule
         snarkLevel: 'off',
         audioEnabled: false,
       },
@@ -118,24 +117,6 @@ export function SetupScreen() {
                 </button>
               ))}
             </div>
-          </div>
-
-          {/* First 3 Rolls Rule */}
-          <div className="flex items-start space-x-3">
-            <input
-              id="first-three-rule"
-              type="checkbox"
-              checked={firstThreeRollsRule}
-              onChange={e => setFirstThreeRollsRule(e.target.checked)}
-              className="mt-1 w-5 h-5 text-primary rounded focus:ring-2 focus:ring-primary"
-            />
-            <label htmlFor="first-three-rule" className="flex-1">
-              <div className="font-semibold text-gray-700">First 3 Rolls: 7 = +70</div>
-              <div className="text-sm text-gray-600">
-                When enabled, rolling a 7 in the first 3 rolls of a round adds 70 points instead
-                of ending the round.
-              </div>
-            </label>
           </div>
         </div>
 

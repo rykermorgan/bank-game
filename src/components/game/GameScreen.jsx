@@ -61,7 +61,6 @@ export function GameScreen() {
         currentRound={game.currentRound}
         totalRounds={game.totalRounds}
         rollCount={game.rollCountInRound}
-        firstThreeRollsRule={game.settings.firstThreeRollsSevenRule}
       />
 
       {/* Bank Display */}
