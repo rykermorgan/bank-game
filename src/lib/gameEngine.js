@@ -56,6 +56,9 @@ export function initializeGame(config) {
     streakCount: 0,
   }))
 
+  // Randomly select first player
+  const randomStartIndex = Math.floor(Math.random() * players.length)
+
   return {
     id: generateGameId(),
     createdAt: Date.now(),
@@ -68,7 +71,7 @@ export function initializeGame(config) {
     settings,
     roundEnded: false,
     roundEndReason: null, // 'seven_rolled' | 'all_banked' | null
-    currentPlayerIndex: 0, // Track whose turn it is
+    currentPlayerIndex: randomStartIndex, // Random starting player
   }
 }
 

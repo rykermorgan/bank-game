@@ -483,7 +483,7 @@ describe('Game State Machine', () => {
   })
 
   describe('Turn Tracking', () => {
-    test('initializeGame sets first player as current', () => {
+    test('initializeGame sets random starting player', () => {
       const game = initializeGame({
         players: [
           { id: 'p1', name: 'Alice' },
@@ -494,12 +494,14 @@ describe('Game State Machine', () => {
         settings: { firstThreeRollsSevenRule: false },
       })
 
-      expect(game.currentPlayerIndex).toBe(0)
-      expect(game.players[game.currentPlayerIndex].name).toBe('Alice')
+      // Should have a valid player index
+      expect(game.currentPlayerIndex).toBeGreaterThanOrEqual(0)
+      expect(game.currentPlayerIndex).toBeLessThan(3)
+      expect(game.players[game.currentPlayerIndex]).toBeDefined()
     })
 
     test('processDiceRoll advances turn to next player', () => {
-      const game = initializeGame({
+      let game = initializeGame({
         players: [
           { id: 'p1', name: 'Alice' },
           { id: 'p2', name: 'Bob' },
@@ -508,6 +510,9 @@ describe('Game State Machine', () => {
         totalRounds: 10,
         settings: { firstThreeRollsSevenRule: false },
       })
+
+      // Set to Alice to make test deterministic
+      game = { ...game, currentPlayerIndex: 0 }
 
       const afterRoll = processDiceRoll(game, { dice1: 3, dice2: 2 })
 
@@ -524,6 +529,9 @@ describe('Game State Machine', () => {
         totalRounds: 10,
         settings: { firstThreeRollsSevenRule: false },
       })
+
+      // Set to Alice to make test deterministic
+      game = { ...game, currentPlayerIndex: 0 }
 
       // Alice rolls to build bank
       game = processDiceRoll(game, { dice1: 3, dice2: 2 }) // Bank = 5, Bob's turn
@@ -545,6 +553,9 @@ describe('Game State Machine', () => {
         settings: { firstThreeRollsSevenRule: false },
       })
 
+      // Set to Alice to make test deterministic
+      game = { ...game, currentPlayerIndex: 0 }
+
       // Alice rolls
       game = processDiceRoll(game, { dice1: 3, dice2: 2 })
       expect(game.currentPlayerIndex).toBe(1) // Bob
@@ -564,6 +575,9 @@ describe('Game State Machine', () => {
         totalRounds: 10,
         settings: { firstThreeRollsSevenRule: false },
       })
+
+      // Set to Alice to make test deterministic
+      game = { ...game, currentPlayerIndex: 0 }
 
       // Alice rolls to build bank
       game = processDiceRoll(game, { dice1: 3, dice2: 2 }) // Bank = 5, Bob's turn
@@ -588,6 +602,9 @@ describe('Game State Machine', () => {
         totalRounds: 10,
         settings: { firstThreeRollsSevenRule: false },
       })
+
+      // Set to Alice to make test deterministic
+      game = { ...game, currentPlayerIndex: 0 }
 
       // Alice rolls
       game = processDiceRoll(game, { dice1: 3, dice2: 2 }) // Bob's turn
@@ -614,6 +631,9 @@ describe('Game State Machine', () => {
         totalRounds: 10,
         settings: { firstThreeRollsSevenRule: false },
       })
+
+      // Set to Alice to make test deterministic
+      game = { ...game, currentPlayerIndex: 0 }
 
       // Alice rolls
       game = processDiceRoll(game, { dice1: 3, dice2: 2 }) // Bank = 5
