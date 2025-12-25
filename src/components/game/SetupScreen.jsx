@@ -4,11 +4,11 @@ import { useGameStore } from '../../store/gameStore'
 export function SetupScreen() {
   const { startNewGame } = useGameStore()
 
-  const [playerNames, setPlayerNames] = useState(['Alice', 'Bob'])
+  const [playerNames, setPlayerNames] = useState(['Player 1', 'Player 2'])
   const [totalRounds, setTotalRounds] = useState(10)
 
   const handleAddPlayer = () => {
-    if (playerNames.length < 6) {
+    if (playerNames.length < 50) {
       setPlayerNames([...playerNames, ''])
     }
   }
@@ -61,7 +61,7 @@ export function SetupScreen() {
 
         {/* Players */}
         <div className="p-6 bg-white rounded-xl shadow-card space-y-4">
-          <h2 className="text-h2 font-bold text-gray-800">Players (2-6)</h2>
+          <h2 className="text-h2 font-bold text-gray-800">Players</h2>
 
           {playerNames.map((name, index) => (
             <div key={index} className="flex items-center space-x-3">
@@ -83,7 +83,7 @@ export function SetupScreen() {
             </div>
           ))}
 
-          {playerNames.length < 6 && (
+          {playerNames.length < 50 && (
             <button
               onClick={handleAddPlayer}
               className="w-full py-3 border-2 border-dashed border-gray-300 text-gray-600 font-semibold rounded-lg hover:border-primary hover:text-primary"
