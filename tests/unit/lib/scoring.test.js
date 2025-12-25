@@ -16,18 +16,18 @@ describe('Scoring Logic', () => {
       expect(result.roundEnded).toBe(false)
     })
 
-    test('doubles logic: adds sum then doubles entire bank', () => {
-      // Bank = 20, roll = 4+4 (sum=8, doubles)
-      // Should be: (20 + 8) * 2 = 56
+    test('doubles logic: just doubles the bank (dice value ignored)', () => {
+      // Bank = 20, roll = any doubles after roll 3
+      // Should be: 20 * 2 = 40
       const result = calculateBankTotal({
         currentBank: 20,
-        diceSum: 8,
+        diceSum: 8, // This value is ignored for doubles
         isDoubles: true,
         rollCount: 4, // After first 3 rolls, so doubles apply
         settings: { firstThreeRollsSevenRule: false },
       })
 
-      expect(result.newBank).toBe(56)
+      expect(result.newBank).toBe(40)
       expect(result.roundEnded).toBe(false)
     })
 
@@ -142,13 +142,13 @@ describe('Scoring Logic', () => {
     test('handles large bank totals correctly', () => {
       const result = calculateBankTotal({
         currentBank: 200,
-        diceSum: 10,
+        diceSum: 10, // Ignored for doubles
         isDoubles: true,
         rollCount: 5,
         settings: { firstThreeRollsSevenRule: false },
       })
 
-      expect(result.newBank).toBe(420) // (200 + 10) * 2
+      expect(result.newBank).toBe(400) // 200 * 2
       expect(result.roundEnded).toBe(false)
     })
   })

@@ -42,24 +42,32 @@ export const useGameStore = create((set, get) => ({
 
     if (!game) return
 
-    // Validate dice sum
-    const sum = parseInt(diceSum, 10)
-    if (isNaN(sum) || sum < 2 || sum > 12) {
-      set({
-        showError: true,
-        errorMessage: 'Dice sum must be between 2 and 12',
-      })
-      return
+    // For doubles after roll 3, we don't need dice value
+    const isDoublesAfterRoll3 = isDoublesChecked && game.rollCountInRound >= 3
+
+    // Only validate dice sum if NOT doubles after roll 3
+    let sum
+    if (!isDoublesAfterRoll3) {
+      sum = parseInt(diceSum, 10)
+      if (isNaN(sum) || sum < 2 || sum > 12) {
+        set({
+          showError: true,
+          errorMessage: 'Dice sum must be between 2 and 12',
+        })
+        return
+      }
     }
 
     try {
       // Determine actual dice values from sum and doubles
-      // For doubles: both dice are sum/2
-      // For non-doubles: use common combinations
       let dice1, dice2
 
-      if (isDoublesChecked) {
-        // Must be even number for doubles
+      if (isDoublesAfterRoll3) {
+        // Doubles after roll 3: dice values don't matter, use placeholder
+        dice1 = 1
+        dice2 = 1
+      } else if (isDoublesChecked) {
+        // Doubles in first 3 rolls: need even sum
         if (sum % 2 !== 0) {
           set({
             showError: true,

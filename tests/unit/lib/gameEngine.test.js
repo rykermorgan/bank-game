@@ -115,8 +115,8 @@ describe('Game State Machine', () => {
       updatedGame = processDiceRoll(updatedGame, { dice1: 2, dice2: 3 }) // Roll 3: bank = 16
       updatedGame = processDiceRoll(updatedGame, { dice1: 4, dice2: 4 }) // Roll 4: doubles!
 
-      // (16 + 8) * 2 = 48
-      expect(updatedGame.bankTotal).toBe(48)
+      // 16 * 2 = 32 (doubles just double the bank, don't add dice value)
+      expect(updatedGame.bankTotal).toBe(32)
       expect(updatedGame.rollCountInRound).toBe(4)
     })
 
@@ -467,8 +467,8 @@ describe('Game State Machine', () => {
       game = processDiceRoll(game, { dice1: 5, dice2: 5 }) // Roll 2: Doubles in first 3! Bank = 10+10 = 20
       game = processDiceRoll(game, { dice1: 3, dice2: 2 }) // Roll 3: Bank = 20+5 = 25
       game = processDiceRoll(game, { dice1: 2, dice2: 3 }) // Roll 4: Bank = 25+5 = 30
-      game = processDiceRoll(game, { dice1: 4, dice2: 4 }) // Roll 5: Doubles! (30+8)*2 = 76
-      game = processBanking(game, 'p2') // Bob banks 76 (total: 76)
+      game = processDiceRoll(game, { dice1: 4, dice2: 4 }) // Roll 5: Doubles! 30*2 = 60
+      game = processBanking(game, 'p2') // Bob banks 60 (total: 60)
 
       expect(game.roundEnded).toBe(true)
 
@@ -478,7 +478,7 @@ describe('Game State Machine', () => {
 
       const status = getGameStatus(game)
       expect(status.winner.name).toBe('Bob')
-      expect(status.winner.totalScore).toBe(76)
+      expect(status.winner.totalScore).toBe(60)
     })
   })
 })

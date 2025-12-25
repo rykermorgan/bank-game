@@ -72,8 +72,8 @@ export function calculateBankTotal({ currentBank, diceSum, isDoubles, rollCount,
 
   // Not a 7, handle normal roll or doubles
   if (isDoubles && rollCount > 3) {
-    // Doubles AFTER first 3 rolls: add sum, then double entire bank
-    newBank = (currentBank + diceSum) * 2
+    // Doubles AFTER first 3 rolls: just double the bank (dice value doesn't matter)
+    newBank = currentBank * 2
   } else {
     // Normal roll OR doubles within first 3 rolls: just add sum
     newBank = currentBank + diceSum
