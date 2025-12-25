@@ -63,6 +63,16 @@ export function GameScreen() {
         rollCount={game.rollCountInRound}
       />
 
+      {/* Current Player Turn - Only show if round is active */}
+      {!isRoundEnded && !isGameEnded && (
+        <div className="p-3 bg-secondary/10 border-2 border-secondary rounded-lg text-center">
+          <p className="text-sm font-semibold text-gray-600">Current Turn</p>
+          <p className="text-2xl font-bold text-secondary">
+            {game.players[game.currentPlayerIndex]?.name}
+          </p>
+        </div>
+      )}
+
       {/* Bank Display */}
       <BankDisplay bankTotal={game.bankTotal} />
 

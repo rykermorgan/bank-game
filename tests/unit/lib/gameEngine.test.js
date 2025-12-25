@@ -481,4 +481,155 @@ describe('Game State Machine', () => {
       expect(status.winner.totalScore).toBe(60)
     })
   })
+
+  describe('Turn Tracking', () => {
+    test('initializeGame sets first player as current', () => {
+      const game = initializeGame({
+        players: [
+          { id: 'p1', name: 'Alice' },
+          { id: 'p2', name: 'Bob' },
+          { id: 'p3', name: 'Charlie' },
+        ],
+        totalRounds: 10,
+        settings: { firstThreeRollsSevenRule: false },
+      })
+
+      expect(game.currentPlayerIndex).toBe(0)
+      expect(game.players[game.currentPlayerIndex].name).toBe('Alice')
+    })
+
+    test('processDiceRoll advances turn to next player', () => {
+      const game = initializeGame({
+        players: [
+          { id: 'p1', name: 'Alice' },
+          { id: 'p2', name: 'Bob' },
+          { id: 'p3', name: 'Charlie' },
+        ],
+        totalRounds: 10,
+        settings: { firstThreeRollsSevenRule: false },
+      })
+
+      const afterRoll = processDiceRoll(game, { dice1: 3, dice2: 2 })
+
+      expect(afterRoll.currentPlayerIndex).toBe(1) // Bob's turn
+    })
+
+    test('processBanking advances turn to next player', () => {
+      let game = initializeGame({
+        players: [
+          { id: 'p1', name: 'Alice' },
+          { id: 'p2', name: 'Bob' },
+          { id: 'p3', name: 'Charlie' },
+        ],
+        totalRounds: 10,
+        settings: { firstThreeRollsSevenRule: false },
+      })
+
+      // Alice rolls to build bank
+      game = processDiceRoll(game, { dice1: 3, dice2: 2 }) // Bank = 5, Bob's turn
+      expect(game.currentPlayerIndex).toBe(1)
+
+      // Bob banks
+      game = processBanking(game, 'p2')
+
+      expect(game.currentPlayerIndex).toBe(2) // Charlie's turn
+    })
+
+    test('turn wraps around to first player', () => {
+      let game = initializeGame({
+        players: [
+          { id: 'p1', name: 'Alice' },
+          { id: 'p2', name: 'Bob' },
+        ],
+        totalRounds: 10,
+        settings: { firstThreeRollsSevenRule: false },
+      })
+
+      // Alice rolls
+      game = processDiceRoll(game, { dice1: 3, dice2: 2 })
+      expect(game.currentPlayerIndex).toBe(1) // Bob
+
+      // Bob rolls
+      game = processDiceRoll(game, { dice1: 2, dice2: 2 })
+      expect(game.currentPlayerIndex).toBe(0) // Wraps to Alice
+    })
+
+    test('turn skips players who have banked', () => {
+      let game = initializeGame({
+        players: [
+          { id: 'p1', name: 'Alice' },
+          { id: 'p2', name: 'Bob' },
+          { id: 'p3', name: 'Charlie' },
+        ],
+        totalRounds: 10,
+        settings: { firstThreeRollsSevenRule: false },
+      })
+
+      // Alice rolls to build bank
+      game = processDiceRoll(game, { dice1: 3, dice2: 2 }) // Bank = 5, Bob's turn
+
+      // Bob banks
+      game = processBanking(game, 'p2') // Bob is now out, Charlie's turn
+      expect(game.currentPlayerIndex).toBe(2)
+
+      // Charlie rolls
+      game = processDiceRoll(game, { dice1: 2, dice2: 3 }) // Bank = 10
+      // Should skip Bob (banked) and go to Alice
+      expect(game.currentPlayerIndex).toBe(0)
+    })
+
+    test('next round starts with player who rolled 7', () => {
+      let game = initializeGame({
+        players: [
+          { id: 'p1', name: 'Alice' },
+          { id: 'p2', name: 'Bob' },
+          { id: 'p3', name: 'Charlie' },
+        ],
+        totalRounds: 10,
+        settings: { firstThreeRollsSevenRule: false },
+      })
+
+      // Alice rolls
+      game = processDiceRoll(game, { dice1: 3, dice2: 2 }) // Bob's turn
+      // Bob rolls
+      game = processDiceRoll(game, { dice1: 2, dice2: 3 }) // Charlie's turn
+      // Charlie rolls 7 - ends round
+      game = processDiceRoll(game, { dice1: 3, dice2: 4 })
+
+      expect(game.roundEnded).toBe(true)
+
+      // Advance to next round
+      game = advanceToNextRound(game)
+
+      // Alice should start (next after Charlie)
+      expect(game.currentPlayerIndex).toBe(0)
+    })
+
+    test('next round starts with player after last banker', () => {
+      let game = initializeGame({
+        players: [
+          { id: 'p1', name: 'Alice' },
+          { id: 'p2', name: 'Bob' },
+        ],
+        totalRounds: 10,
+        settings: { firstThreeRollsSevenRule: false },
+      })
+
+      // Alice rolls
+      game = processDiceRoll(game, { dice1: 3, dice2: 2 }) // Bank = 5
+      // Bob banks
+      game = processBanking(game, 'p2')
+      // Alice banks - round ends (all banked)
+      game = processBanking(game, 'p1')
+
+      expect(game.roundEnded).toBe(true)
+      expect(game.roundEndReason).toBe('all_banked')
+
+      // Advance to next round
+      game = advanceToNextRound(game)
+
+      // Bob should start (next after Alice who banked last)
+      expect(game.currentPlayerIndex).toBe(1)
+    })
+  })
 })

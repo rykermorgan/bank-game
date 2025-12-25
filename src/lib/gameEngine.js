@@ -15,6 +15,26 @@ function generateGameId() {
 }
 
 /**
+ * Gets the next player index, skipping banked players
+ * @param {Object} game - Current game state
+ * @param {number} fromIndex - Starting index
+ * @returns {number} - Next active player index
+ */
+function getNextPlayerIndex(game, fromIndex) {
+  const playerCount = game.players.length
+  let nextIndex = (fromIndex + 1) % playerCount
+  let iterations = 0
+
+  // Find next player who hasn't banked (with safety limit)
+  while (game.players[nextIndex].bankedThisRound && iterations < playerCount) {
+    nextIndex = (nextIndex + 1) % playerCount
+    iterations++
+  }
+
+  return nextIndex
+}
+
+/**
  * Initializes a new game
  * @param {Object} config
  * @param {Array} config.players - Array of player configs { id, name }
@@ -48,6 +68,7 @@ export function initializeGame(config) {
     settings,
     roundEnded: false,
     roundEndReason: null, // 'seven_rolled' | 'all_banked' | null
+    currentPlayerIndex: 0, // Track whose turn it is
   }
 }
 
@@ -79,11 +100,15 @@ export function processDiceRoll(game, roll) {
     settings: game.settings,
   })
 
+  // Advance to next player's turn
+  const nextPlayerIndex = getNextPlayerIndex(game, game.currentPlayerIndex)
+
   // Create updated game state
   const updatedGame = {
     ...game,
     bankTotal: scoringResult.newBank,
     rollCountInRound: rollCount,
+    currentPlayerIndex: nextPlayerIndex,
   }
 
   // Check if round ended due to 7
@@ -97,6 +122,7 @@ export function processDiceRoll(game, roll) {
       ...updatedGame,
       roundEnded: endCheck.shouldEnd,
       roundEndReason: endCheck.reason,
+      roundEndPlayerIndex: game.currentPlayerIndex, // Track who rolled the 7
     }
   }
 
@@ -135,10 +161,17 @@ export function processBanking(game, playerId) {
   // Update players array
   const updatedPlayers = game.players.map((p, idx) => (idx === playerIndex ? bankedPlayer : p))
 
+  // Advance to next player's turn
+  const nextPlayerIndex = getNextPlayerIndex(
+    { ...game, players: updatedPlayers },
+    game.currentPlayerIndex
+  )
+
   // Create updated game
   const updatedGame = {
     ...game,
     players: updatedPlayers,
+    currentPlayerIndex: nextPlayerIndex,
   }
 
   // Check if all players have now banked
@@ -152,6 +185,7 @@ export function processBanking(game, playerId) {
       ...updatedGame,
       roundEnded: true,
       roundEndReason: endCheck.reason,
+      roundEndPlayerIndex: playerIndex, // Track who ended the round
     }
   }
 
@@ -195,6 +229,11 @@ export function advanceToNextRound(game) {
     }
   }
 
+  // Determine who starts next round (player after whoever ended this round)
+  const nextRoundStartIndex = game.roundEndPlayerIndex !== undefined
+    ? (game.roundEndPlayerIndex + 1) % game.players.length
+    : game.currentPlayerIndex
+
   // Advance to next round
   return {
     ...game,
@@ -204,6 +243,8 @@ export function advanceToNextRound(game) {
     rollCountInRound: 0,
     roundEnded: false,
     roundEndReason: null,
+    roundEndPlayerIndex: undefined,
+    currentPlayerIndex: nextRoundStartIndex,
   }
 }
 
