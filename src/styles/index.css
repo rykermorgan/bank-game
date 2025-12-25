@@ -1,13 +1,12 @@
+/* Import animations FIRST */
+@import './animations.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* Global styles */
 @layer base {
-  * {
-    @apply border-border;
-  }
-
   body {
     @apply bg-background-light text-text-light;
     font-family:
@@ -18,6 +17,3 @@
       sans-serif;
   }
 }
-
-/* Import animations */
-@import './animations.css';
