@@ -19,6 +19,8 @@ export function GameScreen() {
     toggleDoubles,
     clearError,
     resetGame,
+    undo,
+    canUndo,
   } = useGameStore()
 
   if (!game || !gameStatus) {
@@ -33,12 +35,22 @@ export function GameScreen() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-h1 font-bold text-primary">🎲 Bank Game</h1>
-        <button
-          onClick={resetGame}
-          className="px-4 py-2 text-sm font-semibold text-gray-600 hover:text-gray-800"
-        >
-          New Game
-        </button>
+        <div className="flex items-center space-x-2">
+          {canUndo() && (
+            <button
+              onClick={undo}
+              className="px-4 py-2 text-sm font-semibold text-secondary hover:text-secondary/80"
+            >
+              ↶ Undo
+            </button>
+          )}
+          <button
+            onClick={resetGame}
+            className="px-4 py-2 text-sm font-semibold text-gray-600 hover:text-gray-800"
+          >
+            New Game
+          </button>
+        </div>
       </div>
 
       {/* Error Message */}

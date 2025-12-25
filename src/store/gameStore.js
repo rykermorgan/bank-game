@@ -15,6 +15,7 @@ export const useGameStore = create((set, get) => ({
   // Game state
   game: null,
   gameStatus: null,
+  previousGame: null, // For undo functionality
 
   // UI state
   diceSum: '',
@@ -30,6 +31,7 @@ export const useGameStore = create((set, get) => ({
     set({
       game,
       gameStatus,
+      previousGame: null, // No undo on new game
       diceSum: '',
       isDoublesChecked: false,
       showError: false,
@@ -41,6 +43,9 @@ export const useGameStore = create((set, get) => ({
     const { game, diceSum, isDoublesChecked } = get()
 
     if (!game) return
+
+    // Save current state for undo (deep copy)
+    const previousGame = JSON.parse(JSON.stringify(game))
 
     // For doubles after roll 3, we don't need dice value
     const isDoublesAfterRoll3 = isDoublesChecked && game.rollCountInRound >= 3
@@ -110,6 +115,7 @@ export const useGameStore = create((set, get) => ({
       set({
         game: updatedGame,
         gameStatus: updatedStatus,
+        previousGame, // Save for undo
         diceSum: '',
         isDoublesChecked: false,
         showError: false,
@@ -128,6 +134,9 @@ export const useGameStore = create((set, get) => ({
 
     if (!game) return
 
+    // Save current state for undo (deep copy)
+    const previousGame = JSON.parse(JSON.stringify(game))
+
     try {
       const updatedGame = processBanking(game, playerId)
       const updatedStatus = getGameStatus(updatedGame)
@@ -135,6 +144,7 @@ export const useGameStore = create((set, get) => ({
       set({
         game: updatedGame,
         gameStatus: updatedStatus,
+        previousGame, // Save for undo
         showError: false,
         errorMessage: '',
       })
@@ -151,6 +161,9 @@ export const useGameStore = create((set, get) => ({
 
     if (!game) return
 
+    // Save current state for undo (deep copy)
+    const previousGame = JSON.parse(JSON.stringify(game))
+
     try {
       const updatedGame = advanceToNextRound(game)
       const updatedStatus = getGameStatus(updatedGame)
@@ -158,6 +171,7 @@ export const useGameStore = create((set, get) => ({
       set({
         game: updatedGame,
         gameStatus: updatedStatus,
+        previousGame, // Save for undo
         showError: false,
         errorMessage: '',
       })
@@ -181,10 +195,32 @@ export const useGameStore = create((set, get) => ({
     set({ showError: false, errorMessage: '' })
   },
 
+  undo: () => {
+    const { previousGame } = get()
+
+    if (!previousGame) return
+
+    const updatedStatus = getGameStatus(previousGame)
+
+    set({
+      game: previousGame,
+      gameStatus: updatedStatus,
+      previousGame: null, // Can only undo once
+      showError: false,
+      errorMessage: '',
+    })
+  },
+
+  canUndo: () => {
+    const { previousGame } = get()
+    return previousGame !== null
+  },
+
   resetGame: () => {
     set({
       game: null,
       gameStatus: null,
+      previousGame: null,
       diceSum: '',
       isDoublesChecked: false,
       showError: false,
