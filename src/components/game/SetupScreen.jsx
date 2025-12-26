@@ -3,9 +3,14 @@ import { Users, Hash, Plus, X, Play } from 'lucide-react'
 import { useGameStore } from '../../store/gameStore'
 
 export function SetupScreen() {
-  const { startNewGame } = useGameStore()
+  const { startNewGame, savedPlayerNames } = useGameStore()
 
-  const [playerNames, setPlayerNames] = useState(['Player 1', 'Player 2'])
+  // Use saved player names from previous game if available, otherwise default
+  const initialPlayerNames = savedPlayerNames.length >= 2
+    ? savedPlayerNames
+    : ['Player 1', 'Player 2']
+
+  const [playerNames, setPlayerNames] = useState(initialPlayerNames)
   const [totalRounds, setTotalRounds] = useState(10)
 
   const handleAddPlayer = () => {
