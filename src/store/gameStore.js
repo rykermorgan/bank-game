@@ -20,6 +20,7 @@ export const useGameStore = create(
   game: null,
   gameStatus: null,
   previousGame: null, // For undo functionality
+  savedPlayerNames: [], // For "Play Again" - preserves player names
 
   // UI state
   diceSum: '',
@@ -221,10 +222,16 @@ export const useGameStore = create(
   },
 
   resetGame: () => {
+    const { game } = get()
+
+    // Save player names for "Play Again"
+    const savedPlayerNames = game?.players?.map(p => p.name) || []
+
     set({
       game: null,
       gameStatus: null,
       previousGame: null,
+      savedPlayerNames, // Preserve player names
       diceSum: '',
       isDoublesChecked: false,
       showError: false,
