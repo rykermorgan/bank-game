@@ -18,8 +18,11 @@ export function DiceEntry({ diceSum, onDiceSumChange, isDoublesChecked, onDouble
   const handleDoublesClick = () => {
     if (disabled || doublesDisabled) return
     onDoublesToggle()
-    // Auto-submit after toggling doubles
-    setTimeout(() => onRoll(), 100)
+    // After roll 3, doubles auto-submits (no dice value needed)
+    // Before roll 3, user must click a number button
+    if (rollCount >= 3) {
+      setTimeout(() => onRoll(), 100)
+    }
   }
 
   return (
