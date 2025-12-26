@@ -33,10 +33,9 @@ export function GameScreen() {
   const isGameEnded = game.status === 'ended'
 
   return (
-    <div className="min-h-screen p-4 space-y-4 relative" style={{ backgroundColor: '#F5F5F5' }}>
-      <div className="relative">
+    <div className="min-h-screen p-4 relative" style={{ backgroundColor: '#F5F5F5' }}>
       {/* Header */}
-      <div className="flex items-center justify-between gap-2 mb-1">
+      <div className="flex items-center justify-between gap-2 mb-4">
         <h1 className="text-2xl font-black text-primary whitespace-nowrap">Bank</h1>
         <div className="flex items-center gap-2">
           {canUndo() && (
@@ -60,7 +59,7 @@ export function GameScreen() {
 
       {/* Error Message */}
       {showError && (
-        <div className="p-4 bg-danger/10 border-2 border-danger rounded-lg">
+        <div className="p-4 bg-danger/10 border-2 border-danger rounded-lg mb-4">
           <div className="flex items-center justify-between">
             <p className="text-sm font-semibold text-danger">{errorMessage}</p>
             <button
@@ -75,16 +74,18 @@ export function GameScreen() {
 
       {/* Round Info - Transform into round-end message instead of hiding */}
       {!isGameEnded && !isRoundEnded && (
-        <RoundInfo
-          currentRound={game.currentRound}
-          totalRounds={game.totalRounds}
-          rollCount={game.rollCountInRound}
-        />
+        <div className="mb-4">
+          <RoundInfo
+            currentRound={game.currentRound}
+            totalRounds={game.totalRounds}
+            rollCount={game.rollCountInRound}
+          />
+        </div>
       )}
 
       {/* Round end message */}
       {isRoundEnded && !isGameEnded && (
-        <div className="p-3 bg-warning/10 border border-warning rounded-2xl text-center">
+        <div className="p-3 bg-warning/10 border border-warning rounded-2xl text-center mb-4">
           <p className="text-sm font-bold text-warning">
             {game.currentRound === game.totalRounds ? 'Final round' : `Round ${game.currentRound}`} ended!{' '}
             {game.roundEndReason === 'seven_rolled' ? '7 was rolled!' : 'All players banked!'}
@@ -93,15 +94,17 @@ export function GameScreen() {
       )}
 
       {/* Bank Display with Current Turn nested inside */}
-      <BankDisplay
-        bankTotal={game.bankTotal}
-        currentPlayerName={game.players[game.currentPlayerIndex]?.name}
-        showCurrentTurn={!isRoundEnded && !isGameEnded}
-      />
+      <div className="mb-4">
+        <BankDisplay
+          bankTotal={game.bankTotal}
+          currentPlayerName={game.players[game.currentPlayerIndex]?.name}
+          showCurrentTurn={!isRoundEnded && !isGameEnded}
+        />
+      </div>
 
       {/* Game Ended Screen */}
       {isGameEnded && (
-        <div className="p-6 bg-gradient-to-br from-primary to-secondary rounded-2xl text-center">
+        <div className="p-6 bg-gradient-to-br from-primary to-secondary rounded-2xl text-center mb-4">
           <h2 className="text-h1 font-black text-white mb-4">Game Over!</h2>
           {gameStatus.isTie ? (
             <div>
@@ -132,25 +135,29 @@ export function GameScreen() {
 
       {/* Next Round Button - Only show when round ends */}
       {isRoundEnded && !isGameEnded && (
-        <button
-          onClick={nextRound}
-          className="w-full py-4 bg-primary text-white font-bold text-lg rounded-xl hover:bg-primary-hover active:scale-95 transition-all duration-150"
-        >
-          {game.currentRound === game.totalRounds ? 'View Final Results' : 'Next Round'}
-        </button>
+        <div className="mb-4">
+          <button
+            onClick={nextRound}
+            className="w-full py-4 bg-primary text-white font-bold text-lg rounded-xl hover:bg-primary-hover active:scale-95 transition-all duration-150"
+          >
+            {game.currentRound === game.totalRounds ? 'View Final Results' : 'Next Round'}
+          </button>
+        </div>
       )}
 
       {/* Dice Entry - Only show if round is active */}
       {!isRoundEnded && !isGameEnded && (
-        <DiceEntry
-          diceSum={diceSum}
-          onDiceSumChange={setDiceSum}
-          isDoublesChecked={isDoublesChecked}
-          onDoublesToggle={toggleDoubles}
-          onRoll={rollDice}
-          disabled={isRoundEnded}
-          rollCount={game.rollCountInRound}
-        />
+        <div className="mb-4">
+          <DiceEntry
+            diceSum={diceSum}
+            onDiceSumChange={setDiceSum}
+            isDoublesChecked={isDoublesChecked}
+            onDoublesToggle={toggleDoubles}
+            onRoll={rollDice}
+            disabled={isRoundEnded}
+            rollCount={game.rollCountInRound}
+          />
+        </div>
       )}
 
       {/* Players - consolidated into single card */}
@@ -202,7 +209,6 @@ export function GameScreen() {
             </div>
           ))}
         </div>
-      </div>
       </div>
     </div>
   )
