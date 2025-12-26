@@ -164,14 +164,18 @@ export function processBanking(game, playerId) {
   // Update players array
   const updatedPlayers = game.players.map((p, idx) => (idx === playerIndex ? bankedPlayer : p))
 
-  // Banking does NOT advance the turn - only rolling dice advances the turn
-  // The current player stays the same until they roll
+  // If the CURRENT player banked, advance to next unbanked player
+  // If someone else banked (not their turn), keep current player's turn
+  const shouldAdvanceTurn = playerIndex === game.currentPlayerIndex
+  const nextPlayerIndex = shouldAdvanceTurn
+    ? getNextPlayerIndex({ ...game, players: updatedPlayers }, game.currentPlayerIndex)
+    : game.currentPlayerIndex
 
   // Create updated game
   const updatedGame = {
     ...game,
     players: updatedPlayers,
-    // currentPlayerIndex stays the same - banking doesn't change whose turn it is
+    currentPlayerIndex: nextPlayerIndex,
   }
 
   // Check if all players have now banked
