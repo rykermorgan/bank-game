@@ -87,6 +87,32 @@ The app tracks scoring for a two-dice game with these mechanics:
 - **Fast-paced**: No laggy animations; minimal blocking dialogs
 - **Single-step undo**: Can cross round boundaries
 
+### Design Principles
+
+**IMPORTANT: For all design decisions, layout questions, or UI/UX choices:**
+- Research modern mobile UI patterns for reference
+- CARROT Weather v5 is the primary design inspiration
+- Consider: information hierarchy, vertical space economy, tap target sizes
+- Document design rationale in code comments for major layout decisions
+
+**Core principles:**
+- **Visual hierarchy**: Use consistent spacing to create clear section boundaries
+- **Information grouping**: Related data should be in same card (e.g., all players in one card, not separate cards per player)
+- **Vertical space economy**: Mobile-first means minimizing unnecessary cards and gaps
+- **Consistent interaction patterns**: Similar actions should look and behave the same way
+- **Spacing system** (enforce consistently):
+  - No gap: Elements within same card
+  - Small gap (space-y-2): Related items in a list
+  - Medium gap (space-y-4): Between cards in same section
+  - Large gap (mt-6): Between major sections
+
+**Design decision checklist:**
+- [ ] Does this save vertical space?
+- [ ] Is this consistent with existing patterns?
+- [ ] Is the visual hierarchy clear?
+- [ ] Are tap targets large enough (min 44x44px)?
+- [ ] Does this match CARROT Weather's clean, bold aesthetic?
+
 ### Device Targeting
 - Primary: mobile phone (portrait)
 - UI readable from 3-6 feet away

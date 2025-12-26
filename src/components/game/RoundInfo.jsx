@@ -1,21 +1,30 @@
+import { Hash, Dices } from 'lucide-react'
+
 export function RoundInfo({ currentRound, totalRounds, rollCount }) {
   const isFinalRound = currentRound === totalRounds
 
   return (
-    <div className={`flex items-center justify-between p-3 rounded-lg shadow-card ${
-      isFinalRound ? 'bg-warning/10 border-2 border-warning' : 'bg-white'
+    <div className={`flex items-center justify-between p-4 rounded-2xl border-2 shadow-sm ${
+      isFinalRound
+        ? 'bg-warning/10 border-warning'
+        : 'bg-background-card border-border'
     }`}>
-      <div>
-        <div className="text-xs text-gray-600">Round</div>
-        <div className={`text-xl font-bold ${isFinalRound ? 'text-warning' : 'text-primary'}`}>
-          {isFinalRound && '🏁 '}
-          {currentRound} / {totalRounds}
+      <div className="flex items-center gap-3">
+        <Hash className={`w-5 h-5 ${isFinalRound ? 'text-warning' : 'text-primary'}`} />
+        <div>
+          <div className="text-[10px] font-bold text-muted uppercase tracking-wider">Round</div>
+          <div className={`text-xl font-black ${isFinalRound ? 'text-warning' : 'text-primary'}`}>
+            {currentRound}<span className="text-muted">/{totalRounds}</span>
+          </div>
         </div>
       </div>
 
-      <div>
-        <div className="text-xs text-gray-600">Roll Count</div>
-        <div className="text-xl font-bold text-secondary">{rollCount}</div>
+      <div className="flex items-center gap-3">
+        <Dices className="w-5 h-5 text-secondary" />
+        <div>
+          <div className="text-[10px] font-bold text-muted uppercase tracking-wider">Rolls</div>
+          <div className="text-xl font-black text-secondary">{rollCount}</div>
+        </div>
       </div>
     </div>
   )
